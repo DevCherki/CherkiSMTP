@@ -15,7 +15,7 @@ def print_colored(text, color):
     print(colored_text)
 
 # طباعة النص الملون
-print_colored(r'''
+colored_text = r'''
  ________
 < CHERKI >
  --------
@@ -30,6 +30,7 @@ print_colored(r'''
       ^$$$B  $$$$\     $$$$$$$$$$$$   d$$R"
         "*$bd$$$$      '*$$$$$$$$$$$o+#"
              """"          """""""
+ 
    _____ _               _    _    _____ __  __ _______ _____
   / ____| |             | |  (_)  / ____|  \/  |__   __|  __ \
  | |    | |__   ___ _ __| | ___  | (___ | \  / |  | |  | |__) |
@@ -39,9 +40,20 @@ print_colored(r'''
 
 
 FACEBOOK: https://www.facebook.com/dev.cherki
+INSTAGRAM: https://www.instagram.com/cherki_dev
+'''
 
-INSTAGRAME: https://www.instagram.com/cherki_dev
-''', Colors.WARNING)
+lines = colored_text.split('\n')
+
+for i, line in enumerate(lines):
+    if i % 2 == 0:
+        color = Colors.OKGREEN
+    elif i % 2 == 1:
+        color = Colors.FAIL  # تم تغييره إلى الأحمر
+    else:
+        color = Colors.FAIL  # تم تغييره إلى الأحمر
+
+    print_colored(line, color)
 
 # استخراج بيانات المستخدم
 email = input("EMAIL: ")
