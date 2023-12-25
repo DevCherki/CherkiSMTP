@@ -2,7 +2,6 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-# ANSI escape codes for text color
 class Colors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -11,8 +10,12 @@ class Colors:
     FAIL = '\033[91m'
     ENDC = '\033[0m'
 
-# Your text
-text = r'''
+def print_colored(text, color):
+    colored_text = f"{color}{text}{Colors.ENDC}"
+    print(colored_text)
+
+# طباعة النص الملون
+print_colored(r'''
  ________
 < CHERKI >
  --------
@@ -35,12 +38,10 @@ text = r'''
   \_____|_| |_|\___|_|  |_|\_\_| |_____/|_|  |_|  |_|  |_|
 
 
-FACEBOOK:dev.cherki
-'''
+FACEBOOK: https://www.facebook.com/dev.cherki
 
-# Print the colored text
-colored_text = f"{Colors.WARNING}{text}{Colors.ENDC}"
-print(colored_text)
+INSTAGRAME: https://www.instagram.com/cherki_dev
+''', Colors.WARNING)
 
 # استخراج بيانات المستخدم
 email = input("EMAIL: ")
@@ -59,7 +60,6 @@ html_file_path = input("Enter the message in (html) file format: ")
 with open(html_file_path, "r") as html_file:
     html_content = html_file.read()
 
-sender = email
 subject = input("SUBJECT: ")
 
 try:
@@ -70,17 +70,17 @@ try:
     for receiver in receivers:
         msg = MIMEMultipart()
         msg["Subject"] = subject
-        msg["From"] = sender
+        msg["From"] = email
         msg["To"] = receiver
 
         html_part = MIMEText(html_content, "html")
         msg.attach(html_part)
 
-        server.sendmail(sender, receiver, msg.as_string())
-        print(f"\033[92mتم إرسال الرسالة بنجاح إلى {receiver}\033[0m")
+        server.sendmail(email, receiver, msg.as_string())
+        print_colored(f"Email sent successfully to {receiver}", Colors.OKGREEN)
 
     server.quit()
-    print("\033[94mتم إرسال جميع الرسائل بنجاح!\033[0m")
+    print_colored("All emails sent successfully!", Colors.OKBLUE)
 
 except Exception as e:
-    print("\033[91mحدث خطأ أثناء إرسال الرسائل:", e, "\033[0m")
+    print_colored(f"An error occurred while sending emails: {e}", Colors.FAIL)
