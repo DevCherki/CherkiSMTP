@@ -1,3 +1,7 @@
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
 class Colors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -37,7 +41,6 @@ colored_text = r'''
 
 FACEBOOK: https://www.facebook.com/dev.cherki
 INSTAGRAM: https://www.instagram.com/cherki_dev
-
 '''
 
 lines = colored_text.split('\n')
@@ -51,30 +54,45 @@ for i, line in enumerate(lines):
         color = Colors.FAIL  # تم تغييره إلى الأحمر
 
     print_colored(line, color)
-    
-    
-    # main.py
 
-while True:
-    print("[1] Gmail SMTP")
-    print("[2] GMAIL EXTRATE")
-    choice = input("Enter a number: ")
+# استخراج بيانات المستخدم
+email = input("EMAIL: ")
+password = input("PASSWORD APP: ")
 
-    if choice == '1':
-        import file1
-        file1.run()
-    elif choice == '2':
-        import file2
-        file2.run()
-    else:
-        print("الرجاء اختيار رقم صحيح.")
-# file1.py
+# الحصول على مسار ملف نصي يحتوي على قائمة بريدية
+txt_file_path = input("Enter the path to a text (txt) file containing your mailing list separated by lines: ")
+with open(txt_file_path, "r") as txt_file:
+    receivers_str = txt_file.read()
 
-def run():
-    print("تم تشغيل ملف file1.py - Gmail SMTP")
-    # قم بإضافة الكود الخاص بـ Gmail SMTP هنا
-# file2.py
+# استخدام قائمة بريدية مفصولة بمسافات
+receivers = receivers_str.split()
 
-def run():
-    print("تم تشغيل ملف file2.py - GMAIL EXTRATE")
-    # قم بإضافة الكود الخاص بـ GMAIL EXTRATE هنا
+# الحصول على محتوى ملف HTML من المستخدم
+html_file_path = input("Enter the message in (html) file format: ")
+with open(html_file_path, "r") as html_file:
+    html_content = html_file.read()
+
+subject = input("SUBJECT: ")
+
+try:
+    server = smtplib.SMTP("smtp.gmail.com", 587)
+    server.starttls()
+    server.login(email, password)
+
+    for receiver in receivers:
+        msg = MIMEMultipart()
+        msg["Subject"] = subject
+        msg["From"] = email
+        msg["To"] = receiver
+
+        html_part = MIMEText(html_content, "html")
+        msg.attach(html_part)
+
+        server.sendmail(email, receiver, msg.as_string())
+        print_colored(f"Email sent successfully to {receiver}", Colors.OKGREEN)
+
+    server.quit()
+    print_colored("All emails sent successfully!", Colors.OKBLUE)
+
+except Exception as e:
+    print_colored(f"An error occurred while sending emails: {e}", Colors.FAIL)
